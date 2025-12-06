@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TimeTracker</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <header class="app-header">
+        <h1>TimeTracker</h1>
+        <button id="theme-toggle" aria-label="Toggle Dark Mode">🌙</button>
+    </header>
+
+    <main>
+        <!-- Timer Section -->
+        <section class="timer-container">
+            <div class="task-input-group">
+                <input type="text" id="task-name" placeholder="What are you working on?">
+                <select id="category-select">
+                    <option value="work">Work</option>
+                    <option value="study">Study</option>
+                    <option value="break">Break</option>
+                </select>
+            </div>
+
+            <!-- The Big Numbers -->
+            <div class="timer-display" id="timer-display">
+                00:00
+            </div>
+
+            <!-- Controls -->
+            <div class="controls">
+                <button id="btn-start" class="btn-primary">Start</button>
+                <button id="btn-pause" class="btn-secondary" hidden>Pause</button>
+                <button id="btn-stop" class="btn-danger">Stop</button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Scripts -->
+    <!-- We use type="module" so we can import other files easily later -->
+    <script type="module" src="js/app.js"></script>
+</body>
+</html>
