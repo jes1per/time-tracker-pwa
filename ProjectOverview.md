@@ -1,175 +1,156 @@
-# TimeTracker PWA - Complete Project Specification
+# TimeTracker PWA
 
 ## Project Overview
-**TimeTracker** is a progressive web app for focused time management that helps users track task durations, categorize activities, and analyze productivity patterns through comprehensive reporting - all while maintaining excellent battery life on mobile devices.
+**TimeTracker** is a progressive web app for focused time management. It tracks task durations using precise "delta-time" calculations, handles interruptions via a robust pause system, and ensures data safety even if the browser crashes. It prioritizes battery life and uses native browser features over heavy external libraries.
 
 ## Core Features
 
 ### 1. Timer & Task Management
-- **Focus Timer**: Set planned duration for tasks with visual countdown
-- **Overtime Tracking**: Continue tracking beyond planned time
-- **Task Categorization**: 
-  - Default categories: Work, Eating, Playing, Exercise, Reading, Other
-  - Custom category creation and management
-- **Session History**: Complete record of all tracking sessions
-- **Pause/Resume**: Interrupt and continue tracking sessions
+- **Drift-Free Focus Timer**: Calculates time based on timestamps (not a tick counter) to ensure accuracy.
+- **Resilient Tracking**: 
+  - **Pause/Resume**: Accurately tracks active work time separate from wall-clock time.
+  - **Crash Recovery**: Automatically restores the running timer state if the page is refreshed or closed accidentally.
+- **Overtime Tracking**: Allows sessions to continue past the planned duration.
+- **Task Categorization**: Standard (Work, Study, Health, etc.) + Custom categories.
 
-### 2. Data Management
-- **Local Storage**: IndexedDB for reliable client-side data storage
+### 2. User Feedback & Notifications
+- **Audio Alerts**: Simple "Ding" sound when the timer completes.
+- **System Notifications**: Native browser notifications if the user is in another tab when time is up.
+- **Screen Wake Lock**: (Optional toggle) Keeps the screen dim but awake on mobile during focus sessions.
+
+### 3. Data Management
+- **Long-Term Storage**: `IndexedDB` for completed session history.
+- **Current State Storage**: `localStorage` for saving the currently running timer (instant recovery).
 - **Export Capabilities**:
-  - CSV (Excel-compatible)
-  - JSON (developer-friendly)
-  - PDF reports (formatted summaries)
-- **Import Function**: Restore data from backups
-- **Manual Sync**: File-based synchronization between devices
+  - CSV (Excel-compatible).
+  - JSON (Backup).
+  - **Native PDF**: Uses CSS Print Styles (Print -> Save as PDF) to avoid complex PDF libraries.
+- **Import Function**: Restore data from JSON backups.
 
-### 3. Reporting & Analytics
-- **Daily Reports**: 
-  - Time breakdown by category
-  - Planned vs actual duration comparison
-  - Category distribution percentages
-- **Weekly Overview**:
-  - Productivity trends
-  - Category patterns
-  - Overtime analysis
-- **Monthly Summaries**:
-  - Total hours by category
-  - Completion rate statistics
-  - Historical comparisons
-
-### 4. User Experience
-- **Minimalist Modern Design**: Clean, distraction-free interface
-- **Progressive Web App**:
-  - Installable on mobile home screen
-  - Offline functionality
-  - Responsive design (mobile-first)
-- **Dark/Light Theme**: System preference detection
+### 4. Reporting & Analytics
+- **Daily/Weekly/Monthly**: Visual breakdowns of time spent.
+- **Visuals**: Simple pie/bar charts showing category distribution.
 
 ## Technical Architecture
 
 ### Frontend Stack
-- **HTML5**: Semantic structure, PWA manifest
+- **HTML5**: Semantic structure, `<audio>` elements.
 - **CSS3**: 
-  - CSS Grid/Flexbox for layouts
-  - CSS Custom Properties (variables) for theming
-  - Modern responsive design patterns
-- **Vanilla JavaScript (ES6+)**:
-  - Modules for code organization
-  - Async/await for IndexedDB operations
-  - Service Worker for offline functionality
+  - CSS Variables for theming (light/dark).
+  - **Print Media Queries**: `@media print` for report generation.
+- **Vanilla JavaScript**:
+  - `localStorage` for state persistence.
+  - `IndexedDB` for history.
+  - `Notification API` for system alerts.
+  - `WakeLock API` for screen management.
 
-### Key Libraries
-- **Chart.js**: Lightweight charting for reports
-- **jsPDF**: Client-side PDF generation
-- **FileSaver.js**: Export functionality
-- **Date-fns**: Modern date manipulation
-- **Workbox**: Service Worker management
+### Key Libraries (Simplified)
+- **Chart.js**: For visualizing data.
+- **Date-fns**: For easy date formatting and math.
+- **FileSaver.js**: For downloading the CSV/JSON exports.
+- **Workbox**: For easy Service Worker (offline) generation.
+- *Removed: jsPDF (Replaced by CSS Print)*
 
 ### Data Schema
+
+#### 1. Long-Term History (IndexedDB)
+*Stores completed sessions.*
 ```javascript
-// Categories
+{
+  id: string, // UUID
+  categoryId: string,
+  taskName: string,
+  startTime: timestamp, // When the session technically started
+  endTime: timestamp,   // When the session finished
+  
+  // CRITICAL: This is the source of truth for reports
+  accumulatedTime: number, // Total milliseconds actually worked (excluding pauses)
+  
+  plannedDuration: number, // Minutes
+  status: 'completed' | 'abandoned'
+}
+```
+
+#### 2. Current State (localStorage)
+*Stores the "Active" session. Read this on page load to restore state.*
+```javascript
+{
+  taskId: string,
+  categoryId: string,
+  taskName: string,
+  
+  startTime: timestamp,       // When this specific segment started
+  accumulatedTime: number,    // Time banked before the last pause
+  
+  isRunning: boolean,         // Is the timer ticking right now?
+  plannedDuration: number
+}
+```
+
+#### 3. Categories (IndexedDB)
+```javascript
 {
   id: string,
   name: string,
-  color: string,
-  icon: string,
-  isCustom: boolean
-}
-
-// Tracking Sessions
-{
-  id: string,
-  taskName: string,
-  categoryId: string,
-  plannedDuration: number, // minutes
-  actualDuration: number, // minutes
-  startTime: Date,
-  endTime: Date,
-  status: 'completed' | 'abandoned'
+  color: string, // Hex code
+  icon: string   // Emoji or SVG path
 }
 ```
 
 ## Project Structure
 ```
 time-tracker-pwa/
-├── index.html              # Main timer interface
-├── manifest.json           # PWA configuration
-├── sw.js                  # Service Worker
+├── index.html              # Main interface
+├── manifest.json           # PWA config
+├── sw.js                   # Service Worker logic
+├── assets/
+│   └── alarm.mp3           # End-of-timer sound
 ├── css/
-│   ├── style.css          # Main styles
-│   ├── themes.css         # Dark/light themes
-│   └── components/        # Modular CSS
+│   └── style.css           # All styles (Layout, Themes, Print settings)
 ├── js/
-│   ├── app.js             # Main application logic
-│   ├── db.js              # IndexedDB operations
-│   ├── timer.js           # Timer functionality
-│   ├── categories.js      # Category management
-│   ├── reports.js         # Reporting & analytics
-│   ├── export.js          # Export functionality
-│   ├── charts.js          # Chart generation
-│   └── utils.js           # Helper functions
-├── icons/                 # PWA icons
-└── assets/               # Static assets
+│   ├── app.js              # Entry point, event listeners, state recovery
+│   ├── timer.js            # Delta-time logic, pause/resume math
+│   ├── db.js               # IndexedDB helpers
+│   ├── notifications.js    # Audio and System Notification logic
+│   ├── reports.js          # Chart.js rendering
+│   └── utils.js            # Formatters (e.g., msToTime string)
+└── icons/                  # PWA icons
 ```
 
 ## Development Phases
 
-### Phase 1: Core Foundation (Week 1)
-- Basic timer functionality
-- IndexedDB setup
-- Minimal UI structure
-- Category management
+### Phase 1: The "Rock Solid" Timer (Week 1)
+- Implement `timer.js` using the "Delta Time" approach (Current Time - Start Time).
+- Implement `localStorage` saving/loading to handle page refreshes.
+- Build the basic UI for Start/Stop/Pause.
+- Add `Audio` playback logic.
 
-### Phase 2: Enhanced Features (Week 2)
-- Reporting interface
-- Chart integration
-- Export functionality
-- PWA setup
+### Phase 2: Data & Categorization (Week 2)
+- Set up `IndexedDB`.
+- Connect the "Stop" button to save data from the Timer to IndexedDB.
+- Build the Category creation UI.
+- Implement the JSON/CSV export logic.
 
-### Phase 3: Polish & Optimization (Week 3)
-- Responsive design refinement
-- Performance optimization
-- Offline capability
-- Error handling
+### Phase 3: Reporting & PWA (Week 3)
+- Integrate `Chart.js`.
+- Write `@media print` CSS for generating PDF reports.
+- Configure `manifest.json` and `sw.js` (Workbox) for offline support.
+- Final UI polish (Dark mode toggle).
 
-## Performance & Battery Considerations
+## Logic Checklist for Novices
+*These are specific logic checks to keep in mind while coding:*
 
-### Optimizations
-- **Efficient Storage**: Batch IndexedDB operations
-- **Lazy Loading**: Charts and reports generated on-demand
-- **Minimal Background**: No background processes when app closed
-- **Optimized Assets**: Compressed images and minimal dependencies
-
-### Battery Impact Estimate
-- **Active Tracking**: 0.5-1% per hour
-- **Viewing Reports**: 2-3% for complex chart rendering
-- **Idle**: 0% (no background activity)
+1.  **The Pause Trap**: When a user Pauses, calculate `now - startTime` and add it to `accumulatedTime`. When they Resume, reset `startTime` to `now`.
+2.  **The Refresh Trap**: On every "tick" of the timer (every second), save the state to `localStorage`. If the user hits F5, `app.js` reads that storage and continues the countdown seamlessly.
+3.  **The Drift Trap**: Do not do `timeRemaining--`. Do `timeRemaining = duration - (Date.now() - startTime)`.
 
 ## Browser Compatibility
-- Chrome 60+ (mobile & desktop)
-- Firefox 55+
-- Safari 11+
-- Edge 79+
+- **Chrome/Edge**: Full support (including Wake Lock).
+- **Safari (iOS)**: Good support (Wake Lock might require specific handling or be unavailable, but core features work).
+- **Firefox**: Good support.
 
-## Development Environment
-- **WSL 2**: Primary development environment
-- **Live Server**: Local testing
-- **Chrome DevTools**: Debugging and PWA testing
-- **Lighthouse**: Performance auditing
-
-## Success Metrics
-- **Cold Start**: < 1 second (from browser or home screen)
-- **Warm Start**: < 0.5 seconds (app already in memory)
-- **Report Generation**: < 2 seconds for complex analytics
-- **Data Export**: < 1 second for CSV/PDF generation
-- **Battery Impact**: < 1% per hour of active tracking
-
-## Future Enhancement Possibilities
-- Automatic sync via cloud storage
-- Browser tab focus detection
-- Pomodoro technique integration
-- Goal setting and achievement tracking
-
-This specification provides a complete roadmap for building a production-ready time tracking PWA that meets all your requirements while maintaining excellent performance and battery efficiency.
-
-**Ready to begin with Phase 1 development?** I can start setting up the WSL development environment and create the basic project structure!
+## Success Metrics (Updated)
+- **Crash Recovery**: User can refresh the page and the timer continues without losing a second.
+- **Accuracy**: Timer matches the wall-clock exactly, even after 1 hour.
+- **Report Generation**: Native print dialog opens instantly.
+- **Battery**: Low impact (screen dimming managed via system).
