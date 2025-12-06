@@ -44,12 +44,35 @@ export default class Timer {
         this.onTick(0);
     }
 
-    // The Magic Formula
     getElapsedTime() {
         if (!this.isRunning) {
             return this.accumulatedTime;
         }
         // If running: Banked Time + (Current Time - Start Time)
         return this.accumulatedTime + (Date.now() - this.startTime);
+    }
+
+    getState() {
+        return {
+            isRunning: this.isRunning,
+            startTime: this.startTime,
+            accumulatedTime: this.accumulatedTime,
+            lastUpdated: Date.now() // Helpful for debugging
+        };
+    }
+
+    // 2. Import state
+    loadState(state) {
+        this.isRunning = state.isRunning;
+        this.startTime = state.startTime;
+        this.accumulatedTime = state.accumulatedTime;
+        
+        // If it was running when we closed the app, we need to restart the tick loop instantly
+        if (this.isRunning) {
+            this.intervalId = setInterval(() => {
+                const currentTime = this.getElapsedTime();
+                this.onTick(currentTime);
+            }, 1000);
+        }
     }
 }
