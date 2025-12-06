@@ -42,9 +42,11 @@ body {
 main {
     flex: 1;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     padding: var(--spacing);
+    gap: 2rem;
 }
 
 .timer-container {
@@ -108,4 +110,57 @@ button:active {
 
 [hidden] {
     display: none !important;
+}
+
+/* History Section */
+.history-container {
+    width: 100%;
+    max-width: 400px;
+    margin-top: 0;
+    max-height: 300px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+h2 {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    color: var(--text-color);
+}
+
+.history-card {
+    background: var(--card-bg);
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.history-info h4 {
+    margin-bottom: 4px;
+    font-size: 1rem;
+}
+
+.history-info p {
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.history-time {
+    font-weight: bold;
+    color: var(--primary-color);
+    font-size: 1.1rem;
+}
+
+.tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: #eee;
+    font-size: 0.75rem;
+    margin-left: 8px;
+    font-weight: normal;
 }

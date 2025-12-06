@@ -1,15 +1,15 @@
 import Timer from './timer.js';
 import { formatTime } from './utils.js';
-import { saveSession } from './db.js';
+import { saveSession, getHistory } from './db.js';
 
 const timerDisplay = document.getElementById('timer-display');
 const startBtn = document.getElementById('btn-start');
 const pauseBtn = document.getElementById('btn-pause');
 const stopBtn = document.getElementById('btn-stop');
-const taskNameInput = document.getElementById('task-name'); // NEW: Select input
+const taskNameInput = document.getElementById('task-name');
+const historyList = document.getElementById('history-list');
 
 // --- 1. The Save Function ---
-// We save the Timer numbers AND the Task Name
 function saveAppState() {
     const state = {
         timer: myTimer.getState(),
@@ -21,33 +21,27 @@ function saveAppState() {
 // Initialize Timer
 const myTimer = new Timer((currentTimeMs) => {
     timerDisplay.textContent = formatTime(currentTimeMs);
-    saveAppState(); // NEW: Save every second while running
+    saveAppState();
 });
 
 // --- 2. The Load Function ---
 function loadAppState() {
     const savedJSON = localStorage.getItem('timeTrackerState');
-    if (!savedJSON) return; // Nothing saved, start fresh
+    if (!savedJSON) return;
 
     const state = JSON.parse(savedJSON);
 
-    // Restore text
     if (state.taskName) taskNameInput.value = state.taskName;
 
-    // Restore Timer Logic
     if (state.timer) {
         myTimer.loadState(state.timer);
-        
-        // Update display immediately (don't wait 1 second for tick)
         timerDisplay.textContent = formatTime(myTimer.getElapsedTime());
 
-        // Restore UI Buttons
         if (state.timer.isRunning) {
             startBtn.hidden = true;
             pauseBtn.hidden = false;
             stopBtn.disabled = false;
         } else if (state.timer.accumulatedTime > 0) {
-            // It was paused
             startBtn.hidden = false;
             startBtn.textContent = "Resume";
             pauseBtn.hidden = true;
@@ -56,49 +50,103 @@ function loadAppState() {
     }
 }
 
-// Event Listeners
-stopBtn.addEventListener('click', async () => { // <--- Mark as async
-    // 1. Capture data before resetting
-    const sessionData = {
-        taskName: taskNameInput.value || "Untitled Task",
-        category: document.getElementById('category-select').value,
-        duration: myTimer.getElapsedTime(), // In milliseconds
-        startTime: new Date(myTimer.startTime).toISOString(), // Roughly when started
-        endTime: new Date().toISOString()
-    };
-
-    // 2. Save to IndexedDB
+// --- 3. History Renderer ---
+async function renderHistory() {
     try {
-        await saveSession(sessionData);
-        console.log("Session saved to DB:", sessionData);
+        const sessions = await getHistory();
+        
+        if (!sessions || sessions.length === 0) {
+            historyList.innerHTML = '<p style="text-align:center; color:#888;">No sessions yet.</p>';
+            return;
+        }
+
+        sessions.reverse(); 
+
+        historyList.innerHTML = sessions.map(session => {
+            const date = new Date(session.createdAt).toLocaleDateString();
+            const timeStr = formatTime(session.duration);
+            
+            return `
+                <div class="history-card">
+                    <div class="history-info">
+                        <h4>${session.taskName} <span class="tag">${session.category}</span></h4>
+                        <p>${date}</p>
+                    </div>
+                    <div class="history-time">
+                        ${timeStr}
+                    </div>
+                </div>
+            `;
+        }).join('');
+
     } catch (error) {
-        console.error("Failed to save session:", error);
-        alert("Error saving data!");
+        console.error("Error loading history:", error);
     }
+}
 
-    // 3. Reset Timer (Existing logic)
-    myTimer.stop();
-    localStorage.removeItem('timeTrackerState');
-    taskNameInput.value = ""; 
+// --- 4. Event Listeners ---
 
-    startBtn.hidden = false;
-    startBtn.textContent = "Start";
-    pauseBtn.hidden = true;
-    stopBtn.disabled = true;
+// RESTORED: The Start Button
+startBtn.addEventListener('click', () => {
+    myTimer.start();
+    saveAppState(); // Save immediately
+    
+    startBtn.hidden = true;
+    pauseBtn.hidden = false;
+    stopBtn.disabled = false;
 });
 
 pauseBtn.addEventListener('click', () => {
     myTimer.pause();
-    saveAppState(); // NEW: Save state immediately on click
+    saveAppState();
 
     startBtn.hidden = false;
     startBtn.textContent = "Resume";
     pauseBtn.hidden = true;
 });
 
-stopBtn.addEventListener('click', () => {
+// MERGED: The Stop Button (Contains Logic + UI Reset)
+stopBtn.addEventListener('click', async () => {
+    // A. Check Duration
+    const duration = myTimer.getElapsedTime();
+    
+    // NEW Check: If less than 5 seconds (5000ms), ignore it
+    if (duration < 5000) {
+        if(!confirm("Task was less than 5 seconds. Discard it?")) {
+            // If user says "No, keep it", continue. 
+            // If they say "Yes, discard", we proceed to reset below but SKIP saving.
+        } else {
+             // Reset UI and Logic immediately
+            resetUI();
+            return; 
+        }
+    }
+
+    // B. Prepare Data
+    const sessionData = {
+        taskName: taskNameInput.value || "Untitled Task",
+        category: document.getElementById('category-select').value,
+        duration: duration,
+        startTime: new Date(myTimer.startTime).toISOString(),
+        endTime: new Date().toISOString()
+    };
+
+    // C. Save to DB
+    try {
+        await saveSession(sessionData);
+        renderHistory(); // Refresh the list
+    } catch (error) {
+        console.error("Failed to save session:", error);
+        alert("Error saving data!");
+    }
+
+    // D. Reset UI
+    resetUI();
+});
+
+// Helper to clear the interface
+function resetUI() {
     myTimer.stop();
-    // NEW: Clear storage when stopped (task is done)
     localStorage.removeItem('timeTrackerState');
     taskNameInput.value = ""; 
 
@@ -106,7 +154,9 @@ stopBtn.addEventListener('click', () => {
     startBtn.textContent = "Start";
     pauseBtn.hidden = true;
     stopBtn.disabled = true;
-});
+    timerDisplay.textContent = "00:00"; // Explicitly reset text
+}
 
-// --- 3. Run Load on Startup ---
+// --- 5. Init ---
 loadAppState();
+renderHistory();
