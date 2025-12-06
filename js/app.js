@@ -1,5 +1,6 @@
 import Timer from './timer.js';
 import { formatTime } from './utils.js';
+import { saveSession } from './db.js';
 
 const timerDisplay = document.getElementById('timer-display');
 const startBtn = document.getElementById('btn-start');
@@ -56,13 +57,34 @@ function loadAppState() {
 }
 
 // Event Listeners
-startBtn.addEventListener('click', () => {
-    myTimer.start();
-    saveAppState(); // NEW: Save state immediately on click
-    
-    startBtn.hidden = true;
-    pauseBtn.hidden = false;
-    stopBtn.disabled = false;
+stopBtn.addEventListener('click', async () => { // <--- Mark as async
+    // 1. Capture data before resetting
+    const sessionData = {
+        taskName: taskNameInput.value || "Untitled Task",
+        category: document.getElementById('category-select').value,
+        duration: myTimer.getElapsedTime(), // In milliseconds
+        startTime: new Date(myTimer.startTime).toISOString(), // Roughly when started
+        endTime: new Date().toISOString()
+    };
+
+    // 2. Save to IndexedDB
+    try {
+        await saveSession(sessionData);
+        console.log("Session saved to DB:", sessionData);
+    } catch (error) {
+        console.error("Failed to save session:", error);
+        alert("Error saving data!");
+    }
+
+    // 3. Reset Timer (Existing logic)
+    myTimer.stop();
+    localStorage.removeItem('timeTrackerState');
+    taskNameInput.value = ""; 
+
+    startBtn.hidden = false;
+    startBtn.textContent = "Start";
+    pauseBtn.hidden = true;
+    stopBtn.disabled = true;
 });
 
 pauseBtn.addEventListener('click', () => {
