@@ -233,3 +233,46 @@ h2 {
     70% { box-shadow: 0 0 0 6px rgba(231, 76, 60, 0); }
     100% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0); }
 }
+
+/* --- History View Styles --- */
+
+/* The Header with Back Button */
+.history-view-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 1.5rem;
+}
+
+.history-view-header h2 {
+    margin: 0;
+}
+
+/* Data Toolbar (Exports) */
+.data-toolbar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #eee;
+}
+
+/* The Scrollable List (Restored!) */
+.scrollable-list {
+    /* Fixed height + Scroll = Scrollable Area */
+    height: 400px; 
+    overflow-y: auto;
+    border: 1px solid #f0f0f0;
+    border-radius: 8px;
+    padding: 5px;
+    margin-bottom: 1rem;
+}
+
+/* Custom Scrollbar styling (Optional but nice) */
+.scrollable-list::-webkit-scrollbar {
+    width: 6px;
+}
+.scrollable-list::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 4px;
+}

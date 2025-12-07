@@ -14,55 +14,64 @@
     </header>
 
     <main>
-        <!-- Timer Section -->
-        <section class="timer-container">
-            <div class="task-input-group">
-                <input type="text" id="task-name" placeholder="What are you working on?">
-                <select id="category-select">
-                    <option value="work">Work</option>
-                    <option value="study">Study</option>
-                    <option value="break">Break</option>
-                </select>
-            </div>
-
-            <!-- The Big Numbers -->
-            <div class="timer-display" id="timer-display">
-                00:00
-            </div>
-
-            <!-- Controls -->
-            <div class="controls">
-                <button id="btn-start" class="btn-primary">Start</button>
-                <button id="btn-pause" class="btn-secondary" hidden>Pause</button>
-                <button id="btn-stop" class="btn-danger">Stop</button>
-            </div>
-        </section>
-
-        <!-- History Section -->
-        <section class="history-container">
-            <div class="history-header">
-                <h2>Recent Sessions</h2>
-                <div class="export-actions">
-                    <button id="btn-export-csv" class="btn-small" title="Export to Excel">📄 CSV</button>
-                    <button id="btn-export-json" class="btn-small" title="Backup Data">💾 JSON</button>
+        <!-- === VIEW 1: DASHBOARD === -->
+        <div id="dashboard-view">
+            <!-- Timer Section -->
+            <section class="timer-container">
+                <div class="task-input-group">
+                    <input type="text" id="task-name" placeholder="What are you working on?">
+                    <select id="category-select">
+                        <option value="work">Work</option>
+                        <option value="study">Study</option>
+                        <option value="break">Break</option>
+                    </select>
                 </div>
-            </div>
-            <div id="history-list">
-                <!-- Javascript will put items here -->
-                <p style="text-align:center; color:#888;">Loading history...</p>
-            </div>
-        </section>
+                <div class="timer-display" id="timer-display">00:00</div>
+                <div class="controls">
+                    <button id="btn-start" class="btn-primary">Start</button>
+                    <button id="btn-pause" class="btn-secondary" hidden>Pause</button>
+                    <button id="btn-stop" class="btn-danger">Stop</button>
+                </div>
+            </section>
 
-        <!-- Data Management (Temporary Location) -->
-        <section class="data-management">
-            <h3>Data Management</h3>
-            <p class="text-muted">Restore your history from a JSON backup.</p>
-            
-            <input type="file" id="file-import" accept=".json" hidden>
-            <button id="btn-import-trigger" class="btn-secondary" style="width:100%">
-                📂 Import JSON Backup
-            </button>
-        </section>
+            <!-- Recent History (Top 3) -->
+            <section class="history-container">
+                <h2>Recent Sessions</h2>
+                <div id="recent-history-list">
+                    <!-- Top 3 items go here -->
+                </div>
+                <!-- The "View All" button is injected here by JS -->
+            </section>
+        </div>
+
+        <!-- === VIEW 2: FULL HISTORY === -->
+        <div id="history-view" hidden>
+            <!-- Navigation Header -->
+            <div class="history-view-header">
+                <button id="btn-back-to-dashboard" class="btn-small">← Back</button>
+                <h2>All Tasks</h2>
+            </div>
+
+            <!-- Data Tools (Export) -->
+            <div class="data-toolbar">
+                <button id="btn-export-csv" class="btn-small">📄 Export CSV</button>
+                <button id="btn-export-json" class="btn-small">💾 Backup JSON</button>
+            </div>
+
+            <!-- Full Scrollable List -->
+            <div id="full-history-list" class="scrollable-list">
+                <!-- All items go here -->
+            </div>
+
+            <!-- Data Import -->
+            <section class="data-management">
+                <p class="text-muted">Restore from backup</p>
+                <input type="file" id="file-import" accept=".json" hidden>
+                <button id="btn-import-trigger" class="btn-secondary" style="width:100%">
+                    📂 Import JSON
+                </button>
+            </section>
+        </div>
     </main>
 
     <!-- Scripts -->
