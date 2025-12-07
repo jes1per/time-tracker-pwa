@@ -1,6 +1,6 @@
 import Timer from './timer.js';
 import { formatTime } from './utils.js';
-import { saveSession, getHistory ,importSessions } from './db.js';
+import { saveSession, getHistory ,importSessions, requestPersistentStorage } from './db.js';
 import { exportToCSV, exportToJSON } from './export.js';
 
 const timerDisplay = document.getElementById('timer-display');
@@ -218,6 +218,23 @@ fileInput.addEventListener('change', (e) => {
     reader.readAsText(file);
 });
 
+// --- Backup Reminder Logic ---
+function checkBackupStatus() {
+    const lastBackup = localStorage.getItem('lastBackupDate');
+    const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
+    
+    const now = Date.now();
+    const exportBtn = document.getElementById('btn-export-json'); // We will target the JSON button
+
+    // If never backed up OR older than 3 days
+    if (!lastBackup || (now - lastBackup > THREE_DAYS_MS)) {
+        // Visual cue: Make the button look urgent (CSS)
+        exportBtn.classList.add('needs-backup');
+        exportBtn.title = "Backup recommended! (Last backup: Long ago)";
+    } else {
+        exportBtn.classList.remove('needs-backup');
+    }
+}
 
 // Helper to clear the interface
 function resetUI() {
@@ -235,3 +252,5 @@ function resetUI() {
 // --- 5. Init ---
 loadAppState();
 renderHistory();
+requestPersistentStorage();
+checkBackupStatus();

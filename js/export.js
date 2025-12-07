@@ -1,5 +1,9 @@
 import { formatTime } from './utils.js';
 
+function updateLastBackupDate() {
+    localStorage.setItem('lastBackupDate', Date.now());
+}
+
 // 1. Convert Data to CSV Format (Excel readable)
 function convertToCSV(sessions) {
     // CSV Header
@@ -48,6 +52,8 @@ export function exportToCSV(sessions) {
     const csv = convertToCSV(sessions);
     const filename = `timetracker_backup_${new Date().toISOString().slice(0,10)}.csv`;
     downloadFile(csv, filename, 'text/csv;charset=utf-8;');
+
+    updateLastBackupDate();
 }
 
 export function exportToJSON(sessions) {
@@ -58,4 +64,6 @@ export function exportToJSON(sessions) {
     const json = JSON.stringify(sessions, null, 2); // Pretty print
     const filename = `timetracker_backup_${new Date().toISOString().slice(0,10)}.json`;
     downloadFile(json, filename, 'application/json');
+
+    updateLastBackupDate();
 }

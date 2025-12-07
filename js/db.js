@@ -96,3 +96,13 @@ export const importSessions = async (sessions) => {
         existingRequest.onerror = () => reject(existingRequest.error);
     });
 };
+
+// 5. Ask Browser to keep data safe
+export const requestPersistentStorage = async () => {
+    if (navigator.storage && navigator.storage.persist) {
+        const isPersisted = await navigator.storage.persist();
+        console.log(`Persisted storage granted: ${isPersisted}`);
+        return isPersisted;
+    }
+    return false;
+};

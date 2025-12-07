@@ -219,3 +219,17 @@ h2 {
     color: #888;
     margin-bottom: 1rem;
 }
+
+/* Urgent Backup State */
+.needs-backup {
+    border: 2px solid var(--danger-color) !important;
+    color: var(--danger-color) !important;
+    animation: pulse 2s infinite;
+    font-weight: bold;
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.4); }
+    70% { box-shadow: 0 0 0 6px rgba(231, 76, 60, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0); }
+}
