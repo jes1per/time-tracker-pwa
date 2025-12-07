@@ -197,11 +197,15 @@ fileInput.addEventListener('change', (e) => {
                 throw new Error("Invalid file format");
             }
 
-            if (confirm(`Found ${sessions.length} sessions. Import them?`)) {
-                await importSessions(sessions);
-                alert("Import successful!");
-                renderHistory(); // Refresh the list
-            }
+            if (confirm(`Found ${sessions.length} sessions in file. Proceed with import?`)) {
+                    // Capture the result from our new DB logic
+                    const result = await importSessions(sessions);
+                    
+                    // Show detailed feedback
+                    alert(`Import Complete!\n✅ Added: ${result.added}\n⏭️ Skipped (Duplicates): ${result.skipped}`);
+                    
+                    renderHistory(); 
+                }
         } catch (error) {
             console.error(error);
             alert("Failed to import. Make sure the file is a valid JSON backup.");
