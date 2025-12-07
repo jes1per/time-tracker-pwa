@@ -171,11 +171,13 @@ stopBtn.addEventListener('click', async () => {
 exportCsvBtn.addEventListener('click', async () => {
     const sessions = await getHistory(); // Get latest data from DB
     exportToCSV(sessions);
+    checkBackupStatus();
 });
 
 exportJsonBtn.addEventListener('click', async () => {
     const sessions = await getHistory();
     exportToJSON(sessions);
+    checkBackupStatus();
 });
 
 importBtn.addEventListener('click', () => {
