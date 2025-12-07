@@ -54,23 +54,45 @@ export const getHistory = async () => {
     });
 };
 
-// 4. Bulk Import (for restoring backups)
+// 4. Bulk Import
 export const importSessions = async (sessions) => {
     const db = await openDB();
+
+    const existingTransaction = db.transaction([STORE_NAME], 'readonly');
+    const existingStore = existingTransaction.objectStore(STORE_NAME);
+    const existingRequest = existingStore.getAll();
+
     return new Promise((resolve, reject) => {
-        const transaction = db.transaction([STORE_NAME], 'readwrite');
-        const store = transaction.objectStore(STORE_NAME);
+        existingRequest.onsuccess = () => {
+            const currentData = existingRequest.result;
+            
+            // Create a "Set" of startTimes for fast lookup
+            const existingStartTimes = new Set(currentData.map(item => item.startTime));
+
+            // Start a new transaction to write data
+            const writeTransaction = db.transaction([STORE_NAME], 'readwrite');
+            const writeStore = writeTransaction.objectStore(STORE_NAME);
+            
+            let addedCount = 0;
+            let skippedCount = 0;
+
+            sessions.forEach(session => {
+                // Check if this specific timestamp already exists
+                if (existingStartTimes.has(session.startTime)) {
+                    skippedCount++;
+                    return; // Skip this iteration
+                }
+
+                // If unique, clean the old ID and save
+                const { id, ...cleanSession } = session; 
+                writeStore.add(cleanSession);
+                addedCount++;
+            });
+
+            writeTransaction.oncomplete = () => resolve({ added: addedCount, skipped: skippedCount });
+            writeTransaction.onerror = () => reject(writeTransaction.error);
+        };
         
-        let errorCount = 0;
-
-        sessions.forEach(session => {
-            // We remove the old ID so IndexedDB generates a new unique one
-            // This prevents conflicts if you import the same file twice
-            const { id, ...cleanSession } = session; 
-            store.add(cleanSession);
-        });
-
-        transaction.oncomplete = () => resolve();
-        transaction.onerror = () => reject(transaction.error);
+        existingRequest.onerror = () => reject(existingRequest.error);
     });
 };
