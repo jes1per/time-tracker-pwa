@@ -65,7 +65,12 @@ async function renderHistory() {
 
         sessions.reverse(); 
 
-        historyList.innerHTML = sessions.map(session => {
+        // 1. Slice the array to get only the first 3 items
+        const recentSessions = sessions.slice(0, 3);
+        const hasMore = sessions.length > 3;
+
+        // 2. Generate HTML for the top 3
+        let html = recentSessions.map(session => {
             const date = new Date(session.createdAt).toLocaleDateString();
             const timeStr = formatTime(session.duration);
             
@@ -81,6 +86,24 @@ async function renderHistory() {
                 </div>
             `;
         }).join('');
+
+        // 3. Add "View More" button if needed
+        if (hasMore) {
+            html += `
+                <button id="btn-view-history" class="btn-small" style="width:100%; margin-top:10px; background:#f0f0f0;">
+                    View All History (${sessions.length})
+                </button>
+            `;
+        }
+        
+        historyList.innerHTML = html;
+
+        // 4. Attach Event Listener to the new button
+        if (hasMore) {
+            document.getElementById('btn-view-history').addEventListener('click', () => {
+                alert("Full history view is in development!");
+            });
+        }
 
     } catch (error) {
         console.error("Error loading history:", error);
