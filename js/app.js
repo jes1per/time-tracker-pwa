@@ -1,6 +1,6 @@
 import Timer from './timer.js';
 import { formatTime } from './utils.js';
-import { saveSession, getHistory } from './db.js';
+import { saveSession, getHistory ,importSessions } from './db.js';
 import { exportToCSV, exportToJSON } from './export.js';
 
 const timerDisplay = document.getElementById('timer-display');
@@ -11,6 +11,8 @@ const taskNameInput = document.getElementById('task-name');
 const historyList = document.getElementById('history-list');
 const exportCsvBtn = document.getElementById('btn-export-csv');
 const exportJsonBtn = document.getElementById('btn-export-json');
+const importBtn = document.getElementById('btn-import-trigger');
+const fileInput = document.getElementById('file-import');
 
 // --- 1. The Save Function ---
 function saveAppState() {
@@ -175,6 +177,43 @@ exportJsonBtn.addEventListener('click', async () => {
     const sessions = await getHistory();
     exportToJSON(sessions);
 });
+
+importBtn.addEventListener('click', () => {
+    fileInput.click();
+});
+fileInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    
+    // When file is read:
+    reader.onload = async (event) => {
+        try {
+            const json = event.target.result;
+            const sessions = JSON.parse(json);
+
+            if (!Array.isArray(sessions)) {
+                throw new Error("Invalid file format");
+            }
+
+            if (confirm(`Found ${sessions.length} sessions. Import them?`)) {
+                await importSessions(sessions);
+                alert("Import successful!");
+                renderHistory(); // Refresh the list
+            }
+        } catch (error) {
+            console.error(error);
+            alert("Failed to import. Make sure the file is a valid JSON backup.");
+        }
+        
+        // Clear input so we can select the same file again if needed
+        fileInput.value = ''; 
+    };
+
+    reader.readAsText(file);
+});
+
 
 // Helper to clear the interface
 function resetUI() {

@@ -199,3 +199,24 @@ h2 {
 .btn-small:hover {
     background-color: #d0d0d0;
 }
+
+/* Data Management */
+.data-management {
+    width: 100%;
+    max-width: 400px;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px dashed #ccc;
+    text-align: center;
+}
+
+.data-management h3 {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.text-muted {
+    font-size: 0.8rem;
+    color: #888;
+    margin-bottom: 1rem;
+}

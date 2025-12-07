@@ -53,3 +53,24 @@ export const getHistory = async () => {
         request.onerror = () => reject(request.error);
     });
 };
+
+// 4. Bulk Import (for restoring backups)
+export const importSessions = async (sessions) => {
+    const db = await openDB();
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction([STORE_NAME], 'readwrite');
+        const store = transaction.objectStore(STORE_NAME);
+        
+        let errorCount = 0;
+
+        sessions.forEach(session => {
+            // We remove the old ID so IndexedDB generates a new unique one
+            // This prevents conflicts if you import the same file twice
+            const { id, ...cleanSession } = session; 
+            store.add(cleanSession);
+        });
+
+        transaction.oncomplete = () => resolve();
+        transaction.onerror = () => reject(transaction.error);
+    });
+};
