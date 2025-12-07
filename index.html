@@ -40,7 +40,13 @@
 
         <!-- History Section -->
         <section class="history-container">
-            <h2>Recent Sessions</h2>
+            <div class="history-header">
+                <h2>Recent Sessions</h2>
+                <div class="export-actions">
+                    <button id="btn-export-csv" class="btn-small" title="Export to Excel">📄 CSV</button>
+                    <button id="btn-export-json" class="btn-small" title="Backup Data">💾 JSON</button>
+                </div>
+            </div>
             <div id="history-list">
                 <!-- Javascript will put items here -->
                 <p style="text-align:center; color:#888;">Loading history...</p>

@@ -1,6 +1,7 @@
 import Timer from './timer.js';
 import { formatTime } from './utils.js';
 import { saveSession, getHistory } from './db.js';
+import { exportToCSV, exportToJSON } from './export.js';
 
 const timerDisplay = document.getElementById('timer-display');
 const startBtn = document.getElementById('btn-start');
@@ -8,6 +9,8 @@ const pauseBtn = document.getElementById('btn-pause');
 const stopBtn = document.getElementById('btn-stop');
 const taskNameInput = document.getElementById('task-name');
 const historyList = document.getElementById('history-list');
+const exportCsvBtn = document.getElementById('btn-export-csv');
+const exportJsonBtn = document.getElementById('btn-export-json');
 
 // --- 1. The Save Function ---
 function saveAppState() {
@@ -138,6 +141,16 @@ stopBtn.addEventListener('click', async () => {
 
     // D. Reset UI
     resetUI();
+});
+
+exportCsvBtn.addEventListener('click', async () => {
+    const sessions = await getHistory(); // Get latest data from DB
+    exportToCSV(sessions);
+});
+
+exportJsonBtn.addEventListener('click', async () => {
+    const sessions = await getHistory();
+    exportToJSON(sessions);
 });
 
 // Helper to clear the interface

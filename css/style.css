@@ -164,3 +164,38 @@ h2 {
     margin-left: 8px;
     font-weight: normal;
 }
+
+/* History Header Layout */
+.history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #eee;
+}
+
+.history-header h2 {
+    margin-bottom: 0; /* Remove default margin */
+}
+
+.export-actions {
+    display: flex;
+    gap: 8px;
+}
+
+/* Small Buttons */
+.btn-small {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    border-radius: 6px;
+    background-color: #e0e0e0;
+    color: #333;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-small:hover {
+    background-color: #d0d0d0;
+}
