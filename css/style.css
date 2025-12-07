@@ -3,9 +3,9 @@
     --bg-color: #f4f4f9;
     --text-color: #333333;
     --card-bg: #ffffff;
-    --primary-color: #4a90e2; /* Blue */
-    --danger-color: #e74c3c;  /* Red */
-    --secondary-color: #f39c12; /* Orange for pause */
+    --primary-color: #4a90e2;
+    --danger-color: #e74c3c;
+    --secondary-color: #f39c12;
     
     /* Spacing & Layout */
     --spacing: 1rem;

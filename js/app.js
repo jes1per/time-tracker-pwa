@@ -86,10 +86,9 @@ async function renderHistory() {
 
 // --- 4. Event Listeners ---
 
-// RESTORED: The Start Button
 startBtn.addEventListener('click', () => {
     myTimer.start();
-    saveAppState(); // Save immediately
+    saveAppState();
     
     startBtn.hidden = true;
     pauseBtn.hidden = false;
@@ -105,12 +104,9 @@ pauseBtn.addEventListener('click', () => {
     pauseBtn.hidden = true;
 });
 
-// MERGED: The Stop Button (Contains Logic + UI Reset)
 stopBtn.addEventListener('click', async () => {
     // A. Check Duration
     const duration = myTimer.getElapsedTime();
-    
-    // NEW Check: If less than 5 seconds (5000ms), ignore it
     if (duration < 5000) {
         if(!confirm("Task was less than 5 seconds. Discard it?")) {
             // If user says "No, keep it", continue. 

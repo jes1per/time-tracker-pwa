@@ -41,7 +41,7 @@ export const saveSession = async (sessionData) => {
     });
 };
 
-// 3. Get all sessions (We will use this later for history)
+// 3. Get all sessions
 export const getHistory = async () => {
     const db = await openDB();
     return new Promise((resolve, reject) => {
