@@ -227,26 +227,6 @@ h2 {
     box-shadow: none;
 }
 
-/* --- 7. DESKTOP ENHANCEMENTS (The Polish) --- */
-/* These rules ONLY apply if screen is wider than 768px (Tablet/Desktop) */
-@media (min-width: 768px) {
-    main {
-        padding: 2rem; /* More breathing room */
-    }
-
-    #dashboard-view, #history-view {
-        gap: 2.5rem; /* Larger gaps between cards */
-    }
-
-    .timer-container, .history-container, .scrollable-list {
-        padding: 2.5rem; /* Larger internal padding */
-    }
-    
-    .timer-display {
-        margin: 2.5rem 0; /* More space around numbers */
-    }
-}
-
 /* Urgent Backup Animation */
 .needs-backup {
     border: 2px solid var(--danger-color) !important;
