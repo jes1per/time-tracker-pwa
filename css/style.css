@@ -64,7 +64,7 @@ main {
 }
 
 /* The Views: Fluid Width */
-#dashboard-view, #history-view {
+#dashboard-view, #history-view, #edit-view {
     width: 100%; /* Take full space on mobile */
     max-width: var(--max-width); /* Stop growing on desktop */
     display: flex;
@@ -259,7 +259,7 @@ h2 {
 /* --- APP-LIKE HISTORY VIEW --- */
 
 /* 1. The Container: Force it to be a tall box */
-#history-view {
+#history-view, #edit-view {
     /* Make the card white and tall */
     background-color: var(--card-bg);
     border-radius: var(--border-radius);

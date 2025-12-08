@@ -1,6 +1,6 @@
 import Timer from './timer.js';
 import { formatTime } from './utils.js';
-import { saveSession, getHistory ,importSessions, requestPersistentStorage } from './db.js';
+import { saveSession, getHistory ,importSessions, requestPersistentStorage, updateSession, deleteSession } from './db.js';
 import { exportToCSV, exportToJSON } from './export.js';
 
 // --- DOM ELEMENTS ---
@@ -9,13 +9,17 @@ const startBtn = document.getElementById('btn-start');
 const pauseBtn = document.getElementById('btn-pause');
 const stopBtn = document.getElementById('btn-stop');
 const taskNameInput = document.getElementById('task-name');
+const editTaskName = document.getElementById('edit-task-name');
+const editCategory = document.getElementById('edit-category-select');
+const editDisplayTime = document.getElementById('edit-display-time');
+const editDisplayDate = document.getElementById('edit-display-date');
 
 // Views
 const dashboardView = document.getElementById('dashboard-view');
 const historyView = document.getElementById('history-view');
-const recentList = document.getElementById('recent-history-list'); // Dashboard list
-const fullList = document.getElementById('full-history-list');     // Full page list
-// const historyList = document.getElementById('history-list');
+const recentList = document.getElementById('recent-history-list');
+const fullList = document.getElementById('full-history-list');
+const editView = document.getElementById('edit-view');
 
 // Buttons
 const exportCsvBtn = document.getElementById('btn-export-csv');
@@ -24,6 +28,11 @@ const importBtn = document.getElementById('btn-import-trigger');
 const fileInput = document.getElementById('file-import');
 const backBtn = document.getElementById('btn-back-to-dashboard');
 const quickSaveBtn = document.getElementById('btn-quick-save');
+const btnBackEdit = document.getElementById('btn-back-from-edit');
+const btnSaveEdit = document.getElementById('btn-save-edit');
+const btnDeleteSession = document.getElementById('btn-delete-session');
+
+let currentEditingSession = null;
 
 function saveAppState() {
     const state = {
@@ -66,8 +75,12 @@ function loadAppState() {
 function createSessionCard(session) {
     const date = new Date(session.createdAt).toLocaleDateString();
     const timeStr = formatTime(session.duration);
+    
+    // We encode the JSON to make it safe for HTML attributes
+    const sessionString = encodeURIComponent(JSON.stringify(session));
+
     return `
-        <div class="history-card">
+        <div class="history-card" onclick="window.openEditSession('${sessionString}')" style="cursor: pointer;">
             <div class="history-info">
                 <h4>${session.taskName} <span class="tag">${session.category}</span></h4>
                 <p>${date}</p>
@@ -121,14 +134,17 @@ async function renderFullHistory() {
 }
 
 function switchView(viewName) {
+    dashboardView.hidden = true;
+    historyView.hidden = true;
+    editView.hidden = true;
+    quickSaveBtn.style.display = 'none';
     if (viewName === 'history') {
-        dashboardView.hidden = true;
         historyView.hidden = false;
-        quickSaveBtn.style.display = 'none';
         renderFullHistory();
+    } else if (viewName === 'edit') {
+        editView.hidden = false;
     } else {
         dashboardView.hidden = false;
-        historyView.hidden = true;
         quickSaveBtn.style.display = 'flex';
         renderDashboard();
     }
@@ -241,6 +257,56 @@ function checkBackupStatus() {
         quickSaveBtn.classList.remove('needs-backup');
     }
 }
+
+// --- EDITING LOGIC ---
+window.openEditSession = (sessionString) => {
+    const session = JSON.parse(decodeURIComponent(sessionString));
+    currentEditingSession = session; // Store it globally
+
+    // Fill the form
+    editTaskName.value = session.taskName;
+    editCategory.value = session.category;
+    editDisplayTime.textContent = formatTime(session.duration);
+    editDisplayDate.textContent = new Date(session.createdAt).toLocaleString();
+
+    switchView('edit');
+};
+
+btnSaveEdit.addEventListener('click', async () => {
+    if (!currentEditingSession) return;
+
+    // Update object values
+    currentEditingSession.taskName = editTaskName.value;
+    currentEditingSession.category = editCategory.value;
+
+    try {
+        await updateSession(currentEditingSession);
+        // Go back to the list
+        switchView('history'); 
+    } catch (error) {
+        console.error(error);
+        alert("Failed to update session");
+    }
+});
+
+btnDeleteSession.addEventListener('click', async () => {
+    if (!currentEditingSession) return;
+
+    if (confirm("Are you sure you want to delete this session? This cannot be undone.")) {
+        try {
+            await deleteSession(currentEditingSession.id);
+            // Go back
+            switchView('history');
+        } catch (error) {
+            console.error(error);
+            alert("Failed to delete session");
+        }
+    }
+});
+
+btnBackEdit.addEventListener('click', () => {
+    switchView('history');
+});
 
 function resetUI() {
     myTimer.stop();

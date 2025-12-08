@@ -106,3 +106,32 @@ export const requestPersistentStorage = async () => {
     }
     return false;
 };
+
+// 6. Update an existing session
+export const updateSession = async (updatedSession) => {
+    const db = await openDB();
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction([STORE_NAME], 'readwrite');
+        const store = transaction.objectStore(STORE_NAME);
+        
+        // .put() updates if the ID exists, or adds if it doesn't
+        const request = store.put(updatedSession);
+
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+    });
+};
+
+// 7. Delete a session
+export const deleteSession = async (id) => {
+    const db = await openDB();
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction([STORE_NAME], 'readwrite');
+        const store = transaction.objectStore(STORE_NAME);
+        
+        const request = store.delete(id);
+
+        request.onsuccess = () => resolve();
+        request.onerror = () => reject(request.error);
+    });
+};
