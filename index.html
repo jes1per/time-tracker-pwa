@@ -15,8 +15,11 @@
     
     <!-- 4. Android Theme Color (Matches your header blue) -->
     <meta name="theme-color" content="#4a90e2">
+
+    <!-- 5. Mobile App Capability -->
+    <meta name="mobile-web-app-capable" content="yes"> 
     
-    <!-- 5. iOS Support (Optional but good to have) -->
+    <!-- 6. iOS Support (Optional but good to have) -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </head>
@@ -137,10 +140,10 @@
 
                 <!-- Inputs -->
                 <div class="task-input-group">
-                    <label style="font-size: 0.9rem; font-weight: 600;">Task Name</label>
+                    <label for="edit-task-name" style="font-size: 0.9rem; font-weight: 600;">Task Name</label>
                     <input type="text" id="edit-task-name">
                     
-                    <label style="font-size: 0.9rem; font-weight: 600;">Category</label>
+                    <label for="edit-category-select" style="font-size: 0.9rem; font-weight: 600;">Category</label>
                     <select id="edit-category-select">
                         <option value="work">Work</option>
                         <option value="study">Study</option>
