@@ -2,7 +2,7 @@ const CACHE_NAME = 'timetracker-v1';
 
 // Files required for the app to work offline
 const ASSETS_TO_CACHE = [
-    './',
+    // './',
     './index.html',
     './css/style.css',
     './js/app.js',
