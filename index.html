@@ -46,31 +46,37 @@
 
         <!-- === VIEW 2: FULL HISTORY === -->
         <div id="history-view" hidden>
-            <!-- Navigation Header -->
-            <div class="history-view-header">
-                <button id="btn-back-to-dashboard" class="btn-small">← Back</button>
-                <h2>All Tasks</h2>
+            <!-- 1. FIXED TOP: Header + Tools -->
+            <div class="history-sticky-header">
+                <!-- Left Side: Back + Title -->
+                <div class="header-left">
+                    <button id="btn-back-to-dashboard" class="btn-icon" aria-label="Back">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 12H5M12 19l-7-7 7-7"/>
+                        </svg>
+                    </button>
+                    <h2>All Tasks</h2>
+                </div>
+                
+                <!-- Right Side: Export Buttons -->
+                <div class="header-right">
+                    <button id="btn-export-csv" class="btn-small">📄 CSV</button>
+                    <button id="btn-export-json" class="btn-small">💾 JSON</button>
+                </div>
             </div>
 
-            <!-- Data Tools (Export) -->
-            <div class="data-toolbar">
-                <button id="btn-export-csv" class="btn-small">📄 Export CSV</button>
-                <button id="btn-export-json" class="btn-small">💾 Backup JSON</button>
+            <!-- 2. SCROLLABLE MIDDLE: The List -->
+            <div id="full-history-list" class="scrollable-list-content">
+                <!-- Javascript fills this -->
             </div>
 
-            <!-- Full Scrollable List -->
-            <div id="full-history-list" class="scrollable-list">
-                <!-- All items go here -->
-            </div>
-
-            <!-- Data Import -->
-            <section class="data-management">
-                <p class="text-muted">Restore from backup</p>
+            <!-- 3. FIXED BOTTOM: Import -->
+            <div class="history-footer">
                 <input type="file" id="file-import" accept=".json" hidden>
                 <button id="btn-import-trigger" class="btn-secondary" style="width:100%">
-                    📂 Import JSON
+                    📂 Import JSON Backup
                 </button>
-            </section>
+            </div>
         </div>
     </main>
 

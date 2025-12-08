@@ -239,3 +239,105 @@ h2 {
     70% { box-shadow: 0 0 0 10px rgba(231, 76, 60, 0); }
     100% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0); }
 }
+
+/* --- APP-LIKE HISTORY VIEW --- */
+
+/* 1. The Container: Force it to be a tall box */
+#history-view {
+    /* Make the card white and tall */
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    
+    /* Calculate height: Screen height - Header height - Padding */
+    /* This ensures it fits on one screen without outer scrolling */
+    height: calc(100vh - 120px); 
+    
+    /* Flex Column is the secret sauce */
+    display: flex; 
+    flex-direction: column;
+    padding: 0; /* Clear default padding, we will add it inside */
+    overflow: hidden; /* Prevent the card itself from growing */
+}
+
+/* 2. Fixed Top Section */
+.history-sticky-header {
+    background-color: var(--card-bg); /* White background */
+    padding: 1.5rem 1.5rem 0.5rem 1.5rem;
+    flex-shrink: 0; /* Don't shrink */
+    border-bottom: 1px solid #f0f0f0;
+    z-index: 5;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-top-row {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 1rem;
+}
+
+.header-top-row h2 {
+    margin: 0;
+    font-size: 1.3rem;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.header-left h2 {
+    margin: 0;
+    font-size: 1.2rem;
+    white-space: nowrap; /* Prevent wrapping */
+}
+
+.header-right {
+    display: flex;
+    gap: 8px;
+}
+
+/* Back Button: Icon Only Style */
+.btn-icon {
+    background: transparent;
+    padding: 8px;
+    border-radius: 50%;
+    color: var(--text-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: -8px; /* Negative margin to align with edge */
+}
+.btn-icon:hover {
+    background-color: #f0f0f0;
+}
+
+/* 4. Scrollable Middle Section */
+.scrollable-list-content {
+    /* This tells the list to take all REMAINING height */
+    flex-grow: 1; 
+    
+    /* Only this part scrolls */
+    overflow-y: auto; 
+    padding: 1rem 1.5rem;
+    
+    /* Smooth scroll */
+    -webkit-overflow-scrolling: touch; 
+}
+
+/* 5. Fixed Bottom Section */
+.history-footer {
+    padding: 1rem 1.5rem 1.5rem 1.5rem;
+    border-top: 1px solid #f0f0f0;
+    background-color: var(--card-bg);
+    flex-shrink: 0; /* Don't shrink */
+}
+
+/* Hide the old 'data-management' styling since we moved the button */
+.data-management {
+    display: none;
+}
