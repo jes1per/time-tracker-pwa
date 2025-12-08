@@ -2,9 +2,23 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 1. Ensure mobile scaling is perfect (prevents zooming issues) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
     <title>TimeTracker</title>
+    
+    <!-- 2. Link the CSS -->
     <link rel="stylesheet" href="css/style.css">
+    
+    <!-- 3. Link the Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- 4. Android Theme Color (Matches your header blue) -->
+    <meta name="theme-color" content="#4a90e2">
+    
+    <!-- 5. iOS Support (Optional but good to have) -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </head>
 <body>
 
