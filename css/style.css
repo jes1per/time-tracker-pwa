@@ -42,6 +42,16 @@ body {
     z-index: 10;
 }
 
+.app-header .btn-icon {
+    margin-left: 0; /* Fixes the alignment issue */
+    color: var(--primary-color); /* Makes it Blue */
+    border: 2px solid transparent; /* Reserves space so it doesn't jump */
+    border-radius: 50%;
+    padding: 8px;
+    background: transparent;
+    cursor: pointer;
+}
+
 main {
     flex: 1;
     width: 100%;
@@ -229,15 +239,21 @@ h2 {
 
 /* Urgent Backup Animation */
 .needs-backup {
-    border: 2px solid var(--danger-color) !important;
+    border-color: var(--danger-color) !important;
     color: var(--danger-color) !important;
     animation: pulse 2s infinite;
 }
 
 @keyframes pulse {
-    0% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.4); }
-    70% { box-shadow: 0 0 0 10px rgba(231, 76, 60, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0); }
+    0% { 
+        box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.6); 
+    }
+    70% { 
+        box-shadow: 0 0 0 8px rgba(231, 76, 60, 0); 
+    }
+    100% { 
+        box-shadow: 0 0 0 0 rgba(231, 76, 60, 0); 
+    }
 }
 
 /* --- APP-LIKE HISTORY VIEW --- */

@@ -23,6 +23,7 @@ const exportJsonBtn = document.getElementById('btn-export-json');
 const importBtn = document.getElementById('btn-import-trigger');
 const fileInput = document.getElementById('file-import');
 const backBtn = document.getElementById('btn-back-to-dashboard');
+const quickSaveBtn = document.getElementById('btn-quick-save');
 
 function saveAppState() {
     const state = {
@@ -123,11 +124,13 @@ function switchView(viewName) {
     if (viewName === 'history') {
         dashboardView.hidden = true;
         historyView.hidden = false;
-        renderFullHistory(); // Refresh list when opening
+        quickSaveBtn.style.display = 'none';
+        renderFullHistory();
     } else {
         dashboardView.hidden = false;
         historyView.hidden = true;
-        renderDashboard(); // Refresh recent list when going back
+        quickSaveBtn.style.display = 'flex';
+        renderDashboard();
     }
 }
 backBtn.addEventListener('click', () => switchView('dashboard'));
@@ -220,6 +223,12 @@ fileInput.addEventListener('change', (e) => {
     reader.readAsText(file);
 });
 
+quickSaveBtn.addEventListener('click', async () => {
+    const sessions = await getHistory();
+    exportToJSON(sessions);
+    checkBackupStatus();
+});
+
 // --- Backup Reminder Logic ---
 function checkBackupStatus() {
     const lastBackup = localStorage.getItem('lastBackupDate');
@@ -227,10 +236,9 @@ function checkBackupStatus() {
     const now = Date.now();
 
     if (!lastBackup || (now - lastBackup > THREE_DAYS_MS)) {
-        exportJsonBtn.classList.add('needs-backup');
-        exportJsonBtn.title = "Backup recommended! (Last backup: Long ago)";
+        quickSaveBtn.classList.add('needs-backup');
     } else {
-        exportJsonBtn.classList.remove('needs-backup');
+        quickSaveBtn.classList.remove('needs-backup');
     }
 }
 
