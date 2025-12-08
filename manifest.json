@@ -1,9 +1,8 @@
 {
   "name": "TimeTracker PWA",
   "short_name": "TimeTracker",
-  "start_url": "https://jes1per.github.io/time-tracker-pwa/index.html",
-  "scope": "https://jes1per.github.io/time-tracker-pwa/",
-  "display": "minimal-ui",
+  "start_url": "./index.html",
+  "display": "standalone",
   "background_color": "#f4f4f9",
   "theme_color": "#4a90e2",
   "orientation": "portrait-primary",
