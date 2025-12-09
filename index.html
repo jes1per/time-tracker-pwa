@@ -27,14 +27,28 @@
 
     <header class="app-header">
         <h1>TimeTracker</h1>
-        <button id="btn-quick-save" class="btn-icon" aria-label="Backup Data" title="Save Backup">
-            <!-- Floppy Disk Icon -->
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
-                <polyline points="17 21 17 13 7 13 7 21"></polyline>
-                <polyline points="7 3 7 8 15 8"></polyline>
-            </svg>
-        </button>
+
+        <div class="header-actions">
+            <!-- Quick Save -->
+            <button id="btn-quick-save" class="btn-icon" aria-label="Backup Data" title="Save Backup">
+                <!-- Floppy Disk Icon -->
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                    <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                    <polyline points="7 3 7 8 15 8"></polyline>
+                </svg>
+            </button>
+
+            <!-- Settings -->
+            <button id="btn-settings" class="btn-icon" aria-label="Settings" title="Settings">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+            </button>
+        </div>
+
+        
     </header>
 
     <main>
@@ -94,13 +108,13 @@
                 <!-- Javascript fills this -->
             </div>
 
-            <!-- 3. FIXED BOTTOM: Import -->
+            <!-- 3. FIXED BOTTOM: Import
             <div class="history-footer">
                 <input type="file" id="file-import" accept=".json" hidden>
                 <button id="btn-import-trigger" class="btn-secondary" style="width:100%">
                     📂 Import JSON Backup
                 </button>
-            </div>
+            </div> -->
         </div>
 
         <!-- === VIEW 3: EDIT SESSION === -->
@@ -155,6 +169,57 @@
                 <button id="btn-delete-session" class="btn-danger" style="width: 100%; margin-top: 2rem;">
                     Delete Session
                 </button>
+            </div>
+        </div>
+
+        <!-- === VIEW 4: SETTINGS === -->
+        <div id="settings-view" hidden>
+            <!-- Header -->
+            <div class="history-sticky-header">
+                <div class="header-left">
+                    <button id="btn-back-from-settings" class="btn-icon" aria-label="Back">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 12H5M12 19l-7-7 7-7"/>
+                        </svg>
+                    </button>
+                    <h2>Settings</h2>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="scrollable-list-content">
+                
+                <!-- Group 1: Data -->
+                <div class="settings-group">
+                    <h3>Data Management</h3>
+                    
+                    <!-- Import (Moved from History) -->
+                    <div class="setting-item">
+                        <div>
+                            <h4>Import Backup</h4>
+                            <p>Restore history from JSON file</p>
+                        </div>
+                        <!-- We use a label to trigger the hidden file input -->
+                        <label for="file-import" class="btn-small" style="cursor:pointer;">
+                            Select File
+                        </label>
+                        <!-- The actual input remains hidden -->
+                        <input type="file" id="file-import" accept=".json" hidden>
+                    </div>
+                </div>
+
+                <!-- Group 2: Appearance (Placeholder for now) -->
+                <div class="settings-group">
+                    <h3>Appearance</h3>
+                    <div class="setting-item">
+                        <div>
+                            <h4>Dark Mode</h4>
+                            <p>Coming soon...</p>
+                        </div>
+                        <button class="btn-small" disabled>Auto</button>
+                    </div>
+                </div>
+
             </div>
         </div>
     </main>

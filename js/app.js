@@ -13,6 +13,7 @@ const editTaskName = document.getElementById('edit-task-name');
 const editCategory = document.getElementById('edit-category-select');
 const editDisplayTime = document.getElementById('edit-display-time');
 const editDisplayDate = document.getElementById('edit-display-date');
+const fileInput = document.getElementById('file-import');
 
 // Views
 const dashboardView = document.getElementById('dashboard-view');
@@ -20,17 +21,18 @@ const historyView = document.getElementById('history-view');
 const recentList = document.getElementById('recent-history-list');
 const fullList = document.getElementById('full-history-list');
 const editView = document.getElementById('edit-view');
+const settingsView = document.getElementById('settings-view');
 
 // Buttons
 const exportCsvBtn = document.getElementById('btn-export-csv');
 const exportJsonBtn = document.getElementById('btn-export-json');
-const importBtn = document.getElementById('btn-import-trigger');
-const fileInput = document.getElementById('file-import');
 const backBtn = document.getElementById('btn-back-to-dashboard');
 const quickSaveBtn = document.getElementById('btn-quick-save');
 const btnBackEdit = document.getElementById('btn-back-from-edit');
 const btnSaveEdit = document.getElementById('btn-save-edit');
 const btnDeleteSession = document.getElementById('btn-delete-session');
+const settingsBtn = document.getElementById('btn-settings');
+const backSettingsBtn = document.getElementById('btn-back-from-settings');
 
 let currentEditingSession = null;
 
@@ -137,15 +139,22 @@ function switchView(viewName) {
     dashboardView.hidden = true;
     historyView.hidden = true;
     editView.hidden = true;
+    settingsView.hidden = true;
+
     quickSaveBtn.style.display = 'none';
+    settingsBtn.style.display = 'none'; // Hide gear in sub-pages
+
     if (viewName === 'history') {
         historyView.hidden = false;
         renderFullHistory();
     } else if (viewName === 'edit') {
         editView.hidden = false;
+    } else if (viewName === 'settings') {
+        settingsView.hidden = false;
     } else {
         dashboardView.hidden = false;
         quickSaveBtn.style.display = 'flex';
+        settingsBtn.style.display = 'flex';
         renderDashboard();
     }
 }
@@ -203,9 +212,6 @@ exportJsonBtn.addEventListener('click', async () => {
     checkBackupStatus();
 });
 
-importBtn.addEventListener('click', () => {
-    fileInput.click();
-});
 fileInput.addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -244,6 +250,9 @@ quickSaveBtn.addEventListener('click', async () => {
     exportToJSON(sessions);
     checkBackupStatus();
 });
+
+settingsBtn.addEventListener('click', () => switchView('settings'));
+backSettingsBtn.addEventListener('click', () => switchView('dashboard'));
 
 // --- Backup Reminder Logic ---
 function checkBackupStatus() {
