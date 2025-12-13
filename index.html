@@ -107,14 +107,6 @@
             <div id="full-history-list" class="scrollable-list-content">
                 <!-- Javascript fills this -->
             </div>
-
-            <!-- 3. FIXED BOTTOM: Import
-            <div class="history-footer">
-                <input type="file" id="file-import" accept=".json" hidden>
-                <button id="btn-import-trigger" class="btn-secondary" style="width:100%">
-                    📂 Import JSON Backup
-                </button>
-            </div> -->
         </div>
 
         <!-- === VIEW 3: EDIT SESSION === -->
@@ -188,6 +180,34 @@
 
             <!-- Content -->
             <div class="scrollable-list-content">
+
+                <!-- Group 0: Time Alerts -->
+                <div class="settings-group">
+                    <h3>Time Alerts (Minutes)</h3>
+                    <p style="font-size: 0.8rem; color:#666; margin-bottom:10px;">
+                        Play a sound when you reach this duration. Set to 0 to disable.
+                    </p>
+                    
+                    <div class="setting-item">
+                        <label for="limit-work">Work</label>
+                        <input type="number" id="limit-work" class="input-small" placeholder="0" min="0">
+                    </div>
+                    
+                    <div class="setting-item">
+                        <label for="limit-study">Study</label>
+                        <input type="number" id="limit-study" class="input-small" placeholder="0" min="0">
+                    </div>
+                    
+                    <div class="setting-item">
+                        <label for="limit-break">Break</label>
+                        <input type="number" id="limit-break" class="input-small" placeholder="0" min="0">
+                    </div>
+
+                    <!-- Permission Button -->
+                    <button id="btn-req-notify" class="btn-small" style="width:100%; margin-top:10px;">
+                        🔔 Enable Desktop Notifications
+                    </button>
+                </div>
                 
                 <!-- Group 1: Data -->
                 <div class="settings-group">

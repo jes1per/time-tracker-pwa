@@ -2,6 +2,7 @@ import Timer from './timer.js';
 import { formatTime } from './utils.js';
 import { saveSession, getHistory ,importSessions, requestPersistentStorage, updateSession, deleteSession } from './db.js';
 import { exportToCSV, exportToJSON } from './export.js';
+import Notifier from './notifications.js';
 
 // --- DOM ELEMENTS ---
 const timerDisplay = document.getElementById('timer-display');
@@ -14,6 +15,10 @@ const editCategory = document.getElementById('edit-category-select');
 const editDisplayTime = document.getElementById('edit-display-time');
 const editDisplayDate = document.getElementById('edit-display-date');
 const fileInput = document.getElementById('file-import');
+const notifier = new Notifier();
+const limitWorkInput = document.getElementById('limit-work');
+const limitStudyInput = document.getElementById('limit-study');
+const limitBreakInput = document.getElementById('limit-break');
 
 // Views
 const dashboardView = document.getElementById('dashboard-view');
@@ -33,6 +38,7 @@ const btnSaveEdit = document.getElementById('btn-save-edit');
 const btnDeleteSession = document.getElementById('btn-delete-session');
 const settingsBtn = document.getElementById('btn-settings');
 const backSettingsBtn = document.getElementById('btn-back-from-settings');
+const notifyBtn = document.getElementById('btn-req-notify');
 
 let currentEditingSession = null;
 
@@ -317,6 +323,51 @@ btnBackEdit.addEventListener('click', () => {
     switchView('history');
 });
 
+// --- ALERT SETTINGS LOGIC ---
+
+// 1. Default Settings
+const defaultLimits = { work: 50, study: 25, break: 5 };
+
+// 2. Load Limits from LocalStorage
+function loadLimits() {
+    const saved = localStorage.getItem('categoryLimits');
+    const limits = saved ? JSON.parse(saved) : defaultLimits;
+    
+    limitWorkInput.value = limits.work;
+    limitStudyInput.value = limits.study;
+    limitBreakInput.value = limits.break;
+    
+    return limits;
+}
+
+// 3. Save Limits whenever they change
+function saveLimits() {
+    const limits = {
+        work: parseInt(limitWorkInput.value) || 0,
+        study: parseInt(limitStudyInput.value) || 0,
+        break: parseInt(limitBreakInput.value) || 0
+    };
+    localStorage.setItem('categoryLimits', JSON.stringify(limits));
+    return limits;
+}
+
+// Event Listeners for Inputs
+[limitWorkInput, limitStudyInput, limitBreakInput].forEach(input => {
+    input.addEventListener('change', saveLimits);
+});
+
+// Permission Button
+notifyBtn.addEventListener('click', async () => {
+    const result = await notifier.requestPermission();
+    if (result === 'granted') {
+        notifyBtn.textContent = "✅ Notifications Enabled";
+        notifyBtn.disabled = true;
+        notifier.playAlert("Test", "This is how alerts will sound.");
+    } else {
+        alert("Notifications were denied. Please enable them in browser settings.");
+    }
+});
+
 function resetUI() {
     myTimer.stop();
     localStorage.removeItem('timeTrackerState');
@@ -333,6 +384,7 @@ loadAppState();
 renderDashboard();
 requestPersistentStorage();
 checkBackupStatus();
+loadLimits();
 
 // --- PWA REGISTRATION ---
 if ('serviceWorker' in navigator) {
