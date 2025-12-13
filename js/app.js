@@ -41,6 +41,19 @@ const backSettingsBtn = document.getElementById('btn-back-from-settings');
 const notifyBtn = document.getElementById('btn-req-notify');
 
 let currentEditingSession = null;
+let hasTriggeredAlert = false;
+let currentLimitMs = 0;
+
+function updateCurrentLimit() {
+    const category = document.getElementById('category-select').value;
+    const savedLimits = localStorage.getItem('categoryLimits');
+    const limits = savedLimits ? JSON.parse(savedLimits) : { work: 0, study: 0, break: 0 };
+    
+    const limitMinutes = limits[category] || 0;
+    
+    // Convert to milliseconds
+    currentLimitMs = limitMinutes * 60 * 1000; 
+}
 
 function saveAppState() {
     const state = {
@@ -52,6 +65,10 @@ function saveAppState() {
 
 const myTimer = new Timer((currentTimeMs) => {
     timerDisplay.textContent = formatTime(currentTimeMs);
+    if (currentLimitMs > 0 && !hasTriggeredAlert && currentTimeMs >= currentLimitMs) {
+        notifier.playAlert("Time's Up!", "You reached your time limit.");
+        hasTriggeredAlert = true;
+    }
     saveAppState();
 });
 
@@ -65,6 +82,7 @@ function loadAppState() {
 
     if (state.timer) {
         myTimer.loadState(state.timer);
+        updateCurrentLimit(); 
         timerDisplay.textContent = formatTime(myTimer.getElapsedTime());
 
         if (state.timer.isRunning) {
@@ -167,6 +185,7 @@ function switchView(viewName) {
 backBtn.addEventListener('click', () => switchView('dashboard'));
 
 startBtn.addEventListener('click', () => {
+    updateCurrentLimit();
     myTimer.start();
     saveAppState();
     startBtn.hidden = true;
