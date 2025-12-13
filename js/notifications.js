@@ -21,7 +21,14 @@ export default class Notifier {
     }
 
     playAlert(title, body) {
+        const delay = 400;
         this.playBeep();
+        setTimeout(() => {
+            this.playBeep();
+        }, delay);
+        setTimeout(() => {
+            this.playBeep();
+        }, delay * 2);
 
         if (this.permission === 'granted') {
             if (document.visibilityState === 'hidden') {
