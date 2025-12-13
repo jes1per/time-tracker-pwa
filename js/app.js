@@ -370,6 +370,17 @@ function saveLimits() {
     return limits;
 }
 
+// 4. Update Button UI based on current permission
+function updateNotificationButton() {
+    if (Notification.permission === 'granted') {
+        notifyBtn.textContent = "✅ Notifications Enabled";
+        notifyBtn.disabled = true; // No need to ask again
+    } else if (Notification.permission === 'denied') {
+        notifyBtn.textContent = "❌ Denied (Check Browser Settings)";
+        notifyBtn.disabled = true; // Can't ask again via JS, user must fix in settings
+    }
+}
+
 // Event Listeners for Inputs
 [limitWorkInput, limitStudyInput, limitBreakInput].forEach(input => {
     input.addEventListener('change', saveLimits);
@@ -385,6 +396,7 @@ notifyBtn.addEventListener('click', async () => {
     } else {
         alert("Notifications were denied. Please enable them in browser settings.");
     }
+    updateNotificationButton();
 });
 
 function resetUI() {
@@ -404,6 +416,7 @@ renderDashboard();
 requestPersistentStorage();
 checkBackupStatus();
 loadLimits();
+updateNotificationButton();
 
 // --- PWA REGISTRATION ---
 if ('serviceWorker' in navigator) {
