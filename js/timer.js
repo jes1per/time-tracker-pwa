@@ -1,22 +1,29 @@
+/* =========================================
+   TIMER CLASS
+   Uses "Delta Time" logic (Date.now) for accuracy.
+   ========================================= */
+
 export default class Timer {
     constructor(onTick) {
         this.startTime = 0;
-        this.accumulatedTime = 0; // Time stored from previous pauses
+        this.accumulatedTime = 0; // Time banked from previous sessions
         this.isRunning = false;
         this.intervalId = null;
-        this.onTick = onTick; // Function to run every second (update UI)
+        this.onTick = onTick; // Callback to update UI
     }
 
+    // --- CORE CONTROLS ---
+
     start() {
-        if (this.isRunning) return; // Don't start if already running
+        if (this.isRunning) return;
 
         this.isRunning = true;
-        this.startTime = Date.now(); // Mark the timestamp NOW
+        this.startTime = Date.now();
         
-        // Update the timer every 1000ms (1 second)
+        // Update UI every second
         this.intervalId = setInterval(() => {
             const currentTime = this.getElapsedTime();
-            this.onTick(currentTime); // Tell the UI to update
+            this.onTick(currentTime);
         }, 1000);
     }
 
@@ -24,50 +31,51 @@ export default class Timer {
         if (!this.isRunning) return;
 
         this.isRunning = false;
-        clearInterval(this.intervalId); // Stop the loop
+        clearInterval(this.intervalId);
         
-        // Calculate how much time passed in this specific session
+        // Bank the elapsed time from this specific run
         const sessionDuration = Date.now() - this.startTime;
-        
-        // Add it to our bank
         this.accumulatedTime += sessionDuration;
     }
 
     stop() {
-        this.pause(); // Ensure interval is cleared and time saved
+        this.pause(); 
         
-        // Reset everything
+        // Reset state
         this.accumulatedTime = 0;
         this.startTime = 0;
         
-        // Update UI one last time to show 00:00
+        // Clear UI
         this.onTick(0);
     }
+
+    // --- CALCULATION LOGIC ---
 
     getElapsedTime() {
         if (!this.isRunning) {
             return this.accumulatedTime;
         }
-        // If running: Banked Time + (Current Time - Start Time)
+        // Formula: Banked Time + (Current Time - Start Time)
         return this.accumulatedTime + (Date.now() - this.startTime);
     }
+
+    // --- STATE PERSISTENCE ---
 
     getState() {
         return {
             isRunning: this.isRunning,
             startTime: this.startTime,
             accumulatedTime: this.accumulatedTime,
-            lastUpdated: Date.now() // Helpful for debugging
+            lastUpdated: Date.now()
         };
     }
 
-    // 2. Import state
     loadState(state) {
         this.isRunning = state.isRunning;
         this.startTime = state.startTime;
         this.accumulatedTime = state.accumulatedTime;
         
-        // If it was running when we closed the app, we need to restart the tick loop instantly
+        // If restoring a running timer, restart the loop immediately
         if (this.isRunning) {
             this.intervalId = setInterval(() => {
                 const currentTime = this.getElapsedTime();

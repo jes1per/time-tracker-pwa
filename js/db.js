@@ -2,15 +2,12 @@ const DB_NAME = 'TimeTrackerDB';
 const DB_VERSION = 1;
 const STORE_NAME = 'sessions';
 
-// 1. Open (or Create) the Database
 export const openDB = () => {
     return new Promise((resolve, reject) => {
         const request = indexedDB.open(DB_NAME, DB_VERSION);
 
-        // Runs only if the DB doesn't exist or version changed
         request.onupgradeneeded = (event) => {
             const db = event.target.result;
-            // Create a store named 'sessions' with an auto-incrementing ID
             if (!db.objectStoreNames.contains(STORE_NAME)) {
                 db.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
             }
@@ -21,7 +18,6 @@ export const openDB = () => {
     });
 };
 
-// 2. Save a completed session
 export const saveSession = async (sessionData) => {
     const db = await openDB();
     return new Promise((resolve, reject) => {
@@ -41,7 +37,6 @@ export const saveSession = async (sessionData) => {
     });
 };
 
-// 3. Get all sessions
 export const getHistory = async () => {
     const db = await openDB();
     return new Promise((resolve, reject) => {
@@ -54,10 +49,10 @@ export const getHistory = async () => {
     });
 };
 
-// 4. Bulk Import
 export const importSessions = async (sessions) => {
     const db = await openDB();
 
+    // Fetch existing data to check for duplicates
     const existingTransaction = db.transaction([STORE_NAME], 'readonly');
     const existingStore = existingTransaction.objectStore(STORE_NAME);
     const existingRequest = existingStore.getAll();
@@ -66,10 +61,9 @@ export const importSessions = async (sessions) => {
         existingRequest.onsuccess = () => {
             const currentData = existingRequest.result;
             
-            // Create a "Set" of startTimes for fast lookup
+            // Create a Set of timestamps for fast O(1) lookup
             const existingStartTimes = new Set(currentData.map(item => item.startTime));
 
-            // Start a new transaction to write data
             const writeTransaction = db.transaction([STORE_NAME], 'readwrite');
             const writeStore = writeTransaction.objectStore(STORE_NAME);
             
@@ -77,13 +71,13 @@ export const importSessions = async (sessions) => {
             let skippedCount = 0;
 
             sessions.forEach(session => {
-                // Check if this specific timestamp already exists
+                // Skip if start time exactly matches an existing record
                 if (existingStartTimes.has(session.startTime)) {
                     skippedCount++;
-                    return; // Skip this iteration
+                    return; 
                 }
 
-                // If unique, clean the old ID and save
+                // Remove imported ID to allow local DB to auto-increment a new one
                 const { id, ...cleanSession } = session; 
                 writeStore.add(cleanSession);
                 addedCount++;
@@ -97,7 +91,6 @@ export const importSessions = async (sessions) => {
     });
 };
 
-// 5. Ask Browser to keep data safe
 export const requestPersistentStorage = async () => {
     if (navigator.storage && navigator.storage.persist) {
         const isPersisted = await navigator.storage.persist();
@@ -107,7 +100,6 @@ export const requestPersistentStorage = async () => {
     return false;
 };
 
-// 6. Update an existing session
 export const updateSession = async (updatedSession) => {
     const db = await openDB();
     return new Promise((resolve, reject) => {
@@ -122,7 +114,6 @@ export const updateSession = async (updatedSession) => {
     });
 };
 
-// 7. Delete a session
 export const deleteSession = async (id) => {
     const db = await openDB();
     return new Promise((resolve, reject) => {

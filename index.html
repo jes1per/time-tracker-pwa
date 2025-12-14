@@ -2,36 +2,32 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <!-- 1. Ensure mobile scaling is perfect (prevents zooming issues) -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    
     <title>TimeTracker</title>
-    
-    <!-- 2. Link the CSS -->
-    <link rel="stylesheet" href="css/style.css">
-    
-    <!-- 3. Link the Manifest -->
-    <link rel="manifest" href="manifest.json">
-    
-    <!-- 4. Android Theme Color (Matches your header blue) -->
-    <meta name="theme-color" content="#4a90e2">
 
-    <!-- 5. Mobile App Capability -->
+    <!-- Viewport Settings (Mobile Optimization) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- PWA Configuration -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#4a90e2">
     <meta name="mobile-web-app-capable" content="yes"> 
     
-    <!-- 6. iOS Support (Optional but good to have) -->
+    <!-- iOS Specific Support -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </head>
 <body>
 
+    <!-- Global App Header -->
     <header class="app-header">
         <h1>TimeTracker</h1>
 
         <div class="header-actions">
-            <!-- Quick Save -->
+            <!-- Quick Save Button -->
             <button id="btn-quick-save" class="btn-icon" aria-label="Backup Data" title="Save Backup">
-                <!-- Floppy Disk Icon -->
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
                     <polyline points="17 21 17 13 7 13 7 21"></polyline>
@@ -39,7 +35,7 @@
                 </svg>
             </button>
 
-            <!-- Settings -->
+            <!-- Settings Button -->
             <button id="btn-settings" class="btn-icon" aria-label="Settings" title="Settings">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M10.3 4.3c.4-1.8 2.9-1.8 3.4 0a1.7 1.7 0 0 0 2.6 1.1c1.5-.9 3.3.8 2.4 2.4a1.7 1.7 0 0 0 1.1 2.6c1.8.4 1.8 2.9 0 3.4a1.7 1.7 0 0 0-1.1 2.6c.9 1.5-.8 3.3-2.4 2.4a1.7 1.7 0 0 0-2.6 1.1c-.4 1.8-2.9 1.8-3.4 0a1.7 1.7 0 0 0-2.6-1.1c-1.5.9-3.3-.8-2.4-2.4a1.7 1.7 0 0 0-1.1-2.6c-1.8-.4-1.8-2.9 0-3.4a1.7 1.7 0 0 0 1.1-2.6c-.9-1.5.8-3.3 2.4-2.4a1.7 1.7 0 0 0 2.6-1.1z"></path>
@@ -47,14 +43,12 @@
                 </svg>
             </button>
         </div>
-
-        
     </header>
 
     <main>
-        <!-- === VIEW 1: DASHBOARD === -->
+        
+        <!-- =========================================== VIEW 1: DASHBOARD (Timer & Recent List) ============================================ -->
         <div id="dashboard-view">
-            <!-- Timer Section -->
             <section class="timer-container">
                 <div class="task-input-group">
                     <input type="text" id="task-name" placeholder="What are you working on?">
@@ -64,7 +58,9 @@
                         <option value="break">Break</option>
                     </select>
                 </div>
+                
                 <div class="timer-display" id="timer-display">00:00</div>
+                
                 <div class="controls">
                     <button id="btn-start" class="btn-primary">Start</button>
                     <button id="btn-pause" class="btn-secondary" hidden>Pause</button>
@@ -72,21 +68,18 @@
                 </div>
             </section>
 
-            <!-- Recent History (Top 3) -->
             <section class="history-container">
                 <h2>Recent Sessions</h2>
                 <div id="recent-history-list">
-                    <!-- Top 3 items go here -->
+                    <!-- Populated by JS -->
                 </div>
-                <!-- The "View All" button is injected here by JS -->
+                <!-- "View All" button injected here -->
             </section>
         </div>
 
-        <!-- === VIEW 2: FULL HISTORY === -->
+        <!-- =================================================== VIEW 2: FULL HISTORY =================================================== -->
         <div id="history-view" hidden>
-            <!-- 1. FIXED TOP: Header + Tools -->
             <div class="history-sticky-header">
-                <!-- Left Side: Back + Title -->
                 <div class="header-left">
                     <button id="btn-back-to-dashboard" class="btn-icon" aria-label="Back">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -96,22 +89,19 @@
                     <h2>All Tasks</h2>
                 </div>
                 
-                <!-- Right Side: Export Buttons -->
                 <div class="header-right">
                     <button id="btn-export-csv" class="btn-small">📄 CSV</button>
                     <button id="btn-export-json" class="btn-small">💾 JSON</button>
                 </div>
             </div>
 
-            <!-- 2. SCROLLABLE MIDDLE: The List -->
             <div id="full-history-list" class="scrollable-list-content">
-                <!-- Javascript fills this -->
+                <!-- Populated by JS -->
             </div>
         </div>
 
-        <!-- === VIEW 3: EDIT SESSION === -->
+        <!-- =================================================== VIEW 3: EDIT SESSION =================================================== -->
         <div id="edit-view" hidden>
-            <!-- Header -->
             <div class="history-sticky-header">
                 <div class="header-left">
                     <button id="btn-back-from-edit" class="btn-icon" aria-label="Back">
@@ -121,7 +111,7 @@
                     </button>
                     <h2>Edit Session</h2>
                 </div>
-                <!-- Save Button (Checkmark) -->
+                
                 <div class="header-right">
                     <button id="btn-save-edit" class="btn-icon" style="color: var(--primary-color);" aria-label="Save">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -131,7 +121,6 @@
                 </div>
             </div>
 
-            <!-- Edit Form -->
             <div class="scrollable-list-content">
                 <!-- Read Only Info -->
                 <div style="text-align: center; margin-bottom: 2rem;">
@@ -157,16 +146,14 @@
                     </select>
                 </div>
 
-                <!-- Delete Button (Pushed to bottom) -->
                 <button id="btn-delete-session" class="btn-danger" style="width: 100%; margin-top: 2rem;">
                     Delete Session
                 </button>
             </div>
         </div>
 
-        <!-- === VIEW 4: SETTINGS === -->
+        <!-- ============================================== VIEW 4: SETTINGS ============================================== -->
         <div id="settings-view" hidden>
-            <!-- Header -->
             <div class="history-sticky-header">
                 <div class="header-left">
                     <button id="btn-back-from-settings" class="btn-icon" aria-label="Back">
@@ -178,10 +165,9 @@
                 </div>
             </div>
 
-            <!-- Content -->
             <div class="scrollable-list-content">
 
-                <!-- Group 0: Time Alerts -->
+                <!-- Group: Time Alerts -->
                 <div class="settings-group">
                     <h3>Time Alerts (Minutes)</h3>
                     <p style="font-size: 0.8rem; color:#666; margin-bottom:10px;">
@@ -203,32 +189,28 @@
                         <input type="number" id="limit-break" class="input-small" placeholder="0" min="0">
                     </div>
 
-                    <!-- Permission Button -->
                     <button id="btn-req-notify" class="btn-small" style="width:100%; margin-top:10px;">
                         🔔 Enable Desktop Notifications
                     </button>
                 </div>
                 
-                <!-- Group 1: Data -->
+                <!-- Group: Data Management -->
                 <div class="settings-group">
                     <h3>Data Management</h3>
                     
-                    <!-- Import (Moved from History) -->
                     <div class="setting-item">
                         <div>
                             <h4>Import Backup</h4>
                             <p>Restore history from JSON file</p>
                         </div>
-                        <!-- We use a label to trigger the hidden file input -->
                         <label for="file-import" class="btn-small" style="cursor:pointer;">
                             Select File
                         </label>
-                        <!-- The actual input remains hidden -->
                         <input type="file" id="file-import" accept=".json" hidden>
                     </div>
                 </div>
 
-                <!-- Group 2: Appearance (Placeholder for now) -->
+                <!-- Group: Appearance -->
                 <div class="settings-group">
                     <h3>Appearance</h3>
                     <div class="setting-item">
@@ -244,7 +226,7 @@
         </div>
     </main>
 
-    <!-- Scripts -->
+    <!-- Application Scripts -->
     <script type="module" src="js/app.js"></script>
 </body>
 </html>
