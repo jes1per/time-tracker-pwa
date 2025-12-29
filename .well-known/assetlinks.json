@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "com.jes1per.timefolio",
+        "sha256_cert_fingerprints": ["5B:49:67:BB:15:64:7B:10:A9:34:1B:45:05:57:00:3C:3B:DD:39:D5:FC:9B:47:EF:FF:6F:F5:F0:BE:4C:FE:8D"]
+      }
+    }]
