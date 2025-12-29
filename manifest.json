@@ -1,10 +1,11 @@
 {
-  "name": "TimeTracker PWA",
-  "short_name": "TimeTracker",
+  "name": "Timefolio",
+  "short_name": "Timefolio",
+  "description": "Track your work. Build your time portfolio.",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#f4f4f9",
-  "theme_color": "#4a90e2",
+  "background_color": "#f0ffff",
+  "theme_color": "#1e90ff",
   "orientation": "portrait-primary",
   "icons": [
     {

@@ -1,13 +1,13 @@
 /* ========================================= 1. VARIABLES & RESET ========================================= */
 :root {
     /* Color Palette */
-    --bg-color: #f4f4f9;
-    --text-color: #333333;
+    --bg-color: #f0ffff;
+    --text-color: #2c3e50;
     --card-bg: #ffffff;
-    --primary-color: #4a90e2;
-    --danger-color: #e74c3c;
-    --secondary-color: #f39c12;
-    --border-color: #ddd;
+    --primary-color: #1e90ff;
+    --danger-color: #ff6347;
+    --secondary-color: #ff8f1f;
+    --border-color: #d1d8e0;
     
     /* Layout Dimensions */
     --max-width: 600px; 
